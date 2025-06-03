@@ -1,4 +1,6 @@
-package network.tcp.v5;
+package network.tcp.v6;
+
+import network.tcp.SocketCloseUtil;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -8,21 +10,26 @@ import java.net.Socket;
 import static network.tcp.SocketCloseUtil.closeAll;
 import static util.MyLogger.log;
 
-public class SessionV5 implements Runnable {
+public class SessionV6 implements Runnable {
 
     private final Socket socket;
+    private final DataInputStream input;
+    private final DataOutputStream output;
+    private final SessionManagerV6 sessionManager;
+    private boolean closed = false;
 
-    public SessionV5(Socket socket) {
+    public SessionV6(Socket socket, SessionManagerV6 sessionManager) throws IOException {
         this.socket = socket;
+        this.input = new DataInputStream(socket.getInputStream());
+        this.output = new DataOutputStream(socket.getOutputStream());
+        this.sessionManager = sessionManager;
+        this.sessionManager.add(this);
     }
 
     @Override
     public void run() {
 
-        try (socket;
-             DataInputStream input = new DataInputStream(socket.getInputStream());
-             DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
-
+        try {
             while (true) {
                 // 클라이언트로부터 문자 받기
                 String received = input.readUTF();
@@ -40,8 +47,19 @@ public class SessionV5 implements Runnable {
 
         } catch (IOException e) {
             log(e);
+        } finally {
+            sessionManager.remove(this);
+            close();
         }
+    }
 
+    // 세션 종료 시 ,서버 종료 시 동시에 호출 가능성 존재
+    public synchronized void close() {
+        if (closed) {
+            return;
+        }
+        closeAll(input, output, socket);
+        closed = true;
         log("연결 종료 : " + socket + " isClosed() : " + socket.isClosed());
     }
 }
