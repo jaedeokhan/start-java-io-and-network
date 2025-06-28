@@ -1,7 +1,5 @@
 package network.tcp.v6;
 
-import network.tcp.SocketCloseUtil;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -58,7 +56,7 @@ public class SessionV6 implements Runnable {
         if (closed) {
             return;
         }
-        closeAll(input, output, socket);
+        closeAll(input, output, socket); // shutdown
         closed = true;
         log("연결 종료 : " + socket + " isClosed() : " + socket.isClosed());
     }
