@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommandManagerV3 implements CommandManager {
+public class CommandManagerV4 implements CommandManager {
 
     private static final String DELIMITER = "\\|";
     private final Map<String, Command> commands = new HashMap<>();
     private final Command defaultCommand = new DefaultCommand();
 
-    public CommandManagerV3(SessionManager sessionManager) {
+    public CommandManagerV4(SessionManager sessionManager) {
         commands.put("/join", new JoinCommand(sessionManager));
         commands.put("/message", new MessageCommand(sessionManager));
         commands.put("/change", new ChangeCommand(sessionManager));
