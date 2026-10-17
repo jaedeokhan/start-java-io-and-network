@@ -44,4 +44,14 @@ public class SessionManager {
         }
         return usernames;
     }
+
+    public synchronized void changeUsername(Session currentSession, String newUsername) {
+        for (Session session : sessions) {
+            String currentUsername = currentSession.getUsername();
+            if (session.getUsername().equals(currentUsername)) {
+                session.setUsername(newUsername);
+                log("이름 변경 : " + currentUsername + " -> " + newUsername);
+            }
+        }
+    }
 }
