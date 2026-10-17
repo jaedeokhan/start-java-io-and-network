@@ -3,8 +3,6 @@ package chat.server.command;
 import chat.server.Session;
 import chat.server.SessionManager;
 
-import java.io.IOException;
-
 public class ChangeCommand implements Command{
 
     private final SessionManager sessionManager;

@@ -10,6 +10,7 @@ public class CommandManagerV3 implements CommandManager {
 
     private static final String DELIMITER = "\\|";
     private final Map<String, Command> commands = new HashMap<>();
+    private final Command defaultCommand = new DefaultCommand();
 
     public CommandManagerV3(SessionManager sessionManager) {
         commands.put("/join", new JoinCommand(sessionManager));
@@ -24,11 +25,8 @@ public class CommandManagerV3 implements CommandManager {
         String[] args = totalMessage.split(DELIMITER);
         String key = args[0];
 
-        Command command = commands.get(key);
-        if (command == null) {
-            session.send("처리할 수 없는 명령어 입니다 : " + totalMessage);
-            return;
-        }
+        // NullObject Pattern
+        Command command = commands.getOrDefault(key, defaultCommand);
         command.execute(args, session);
     }
 }
